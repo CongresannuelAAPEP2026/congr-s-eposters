@@ -1,7 +1,7 @@
 /* ============================================================
    CONFIGURATION — à renseigner avant la mise en ligne
    ============================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbyR1TIEwlk_XjRYlNnot3O6atLzGKwPY6C_HXH4fp8dnIawiazz9QTGmf5ak2346GwRwQ/exec"; // URL /exec du déploiement Google Apps Script (Code.gs)
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE"; // URL /exec du déploiement Google Apps Script (Code.gs)
 const THEMES = ["Psychiatrie", "Neurologie", "Cardiologie", "Pédiatrie", "Santé publique", "Autre"];
 
 let state = {
@@ -112,7 +112,7 @@ function submitFormHTML(){
       <div class="row-2">
         <div class="field">
           <label for="auteur">Auteur (nom complet)</label>
-          <input type="text" id="auteur" name="auteur" placeholder="ex. Chemseddine FETNI">
+          <input type="text" id="auteur" name="auteur" placeholder="ex. Nadia BENSAID">
         </div>
         <div class="field">
           <label for="email">E-mail de l'auteur</label>
@@ -121,7 +121,7 @@ function submitFormHTML(){
       </div>
       <div class="field">
         <label for="coauteurs">Co-auteurs <span style="font-weight:400;color:var(--ink-soft);">(optionnel)</span></label>
-        <input type="text" id="coauteurs" name="coauteurs" placeholder="ex. A. OUADI; A. BELMACHICHE; M. NEDJARI">
+        <input type="text" id="coauteurs" name="coauteurs" placeholder="ex. K. AMRANI; S. BOUDJEMAA; R. HADDAD">
       </div>
       <div class="row-2">
         <div class="field">
