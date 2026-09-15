@@ -112,7 +112,7 @@ function submitFormHTML(){
       <div class="row-2">
         <div class="field">
           <label for="auteur">Auteur (nom complet)</label>
-          <input type="text" id="auteur" name="auteur" placeholder="ex. AHMED mohamed">
+          <input type="text" id="auteur" name="auteur" placeholder="ex. Ahmed MOHAMED">
         </div>
         <div class="field">
           <label for="email">E-mail de l'auteur</label>
@@ -121,7 +121,7 @@ function submitFormHTML(){
       </div>
       <div class="field">
         <label for="coauteurs">Co-auteurs <span style="font-weight:400;color:var(--ink-soft);">(optionnel)</span></label>
-        <input type="text" id="coauteurs" name="coauteurs" placeholder="ex. K. steve; S. jobs; R. jhon">
+        <input type="text" id="coauteurs" name="coauteurs" placeholder="ex. Steve JOHN; K. AMRANI; R. HADDAD">
       </div>
       <div class="row-2">
         <div class="field">
