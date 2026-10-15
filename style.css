@@ -432,3 +432,8 @@
   .badge.attente{background:#F1EEE6;color:var(--ink-soft);}
   .badge.accepte{background:#EAF3EC;color:var(--ok);}
   .badge.refuse{background:#FBEEEC;color:var(--danger);}
+
+fieldset{border:none;padding:0;margin:0;min-width:0;}
+fieldset.closed{opacity:.45;filter:grayscale(1);pointer-events:none;user-select:none;}
+fieldset.closed input, fieldset.closed textarea{background:#EEEDE9;cursor:not-allowed;}
+fieldset.closed button.primary{background:#9AA6A1;cursor:not-allowed;}
