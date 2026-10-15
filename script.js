@@ -1,12 +1,13 @@
 /* ============================================================
    CONFIGURATION — à renseigner avant la mise en ligne
    ============================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbyR1TIEwlk_XjRYlNnot3O6atLzGKwPY6C_HXH4fp8dnIawiazz9QTGmf5ak2346GwRwQ/exec"; // URL /exec du déploiement Google Apps Script (Code.gs)
+const API_URL = "https://script.google.com/macros/s/AKfycbyR1TIEwlk_XjRYlNnot3O6atLzGKwPY6C_HXH4fp8dnIawiazz9QTGmf5ak2346GwRwQ/exec"; ; // URL /exec du déploiement Google Apps Script (Code.gs)
+const SUBMISSIONS_OPEN = false; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
 const THEMES = ["Psychiatrie", "Neurologie", "Cardiologie", "Pédiatrie", "Santé publique", "Autre"];
 
 let state = {
   publicView: "submit", // submit | poster  (top-level tab, ignored while in admin views)
-  view: "submit",       // submit | submit-success | poster-lookup | poster-upload | poster-success | admin-gate | admin
+  view: "submit", // submit | submit-success | poster-lookup | poster-upload | poster-success | admin-gate | admin
   posterData: null,     // {name, type, dataUrl, size}
   lastSubmission: null, // {id, titre, auteur, email}
   lookupRecord: null,   // {id, email, statut, titre, posterNom}
@@ -57,11 +58,11 @@ function publicShellHTML(){
 function sidebarHTML(){
   if(state.publicView === 'poster'){
     return `
-      <div class="kicker">Étape 2 — Dépôt du poster</div>
+      <div class="kicker">${SUBMISSIONS_OPEN ? 'Étape 2 — Dépôt du poster' : 'Dépôt du poster'}</div>
       <h1>Vous avez été accepté ?</h1>
-      <div class="sub">Le dépôt du poster n'est ouvert qu'aux résumés validés par le jury. Munissez-vous de votre identifiant et de l'e-mail utilisés lors de la soumission.</div>
+      <div class="sub">${SUBMISSIONS_OPEN ? '' : 'La période de soumission des résumés est terminée. '}Le dépôt du poster n'est ouvert qu'aux résumés validés par le jury. Munissez-vous de votre identifiant et de l'e-mail utilisés lors de la soumission.</div>
       <div class="steps">
-        <div class="step-item"><div class="step-num done">1</div><div class="step-text"><b>Soumission</b><br>Vous avez envoyé votre résumé et reçu un identifiant (ex. AP004).</div></div>
+        <div class="step-item"><div class="step-num done">1</div><div class="step-text"><b>Soumission</b><br>${SUBMISSIONS_OPEN ? 'Vous avez envoyé votre résumé et reçu un identifiant (ex. AP004).' : 'Soumissions closes. Votre identifiant (ex. AP004) vous a été communiqué.'}</div></div>
         <div class="step-item"><div class="step-num done">2</div><div class="step-text"><b>Évaluation</b><br>Le jury examine les résumés reçus.</div></div>
         <div class="step-item"><div class="step-num">3</div><div class="step-text"><b>Dépôt du poster</b><br>Si votre résumé est accepté, déposez ici votre poster définitif.</div></div>
       </div>
@@ -103,8 +104,9 @@ function contentHTML(){
 function submitFormHTML(){
   return `
     <h2>Formulaire de soumission</h2>
-    <div class="lead">Merci de compléter chaque champ. Le poster ne sera demandé qu'après acceptation de votre résumé.</div>
+    ${SUBMISSIONS_OPEN ? `<div class="lead">Merci de compléter chaque champ. Le poster ne sera demandé qu'après acceptation de votre résumé.</div>` : `<div class="form-notice warn"><b>Les inscriptions sont closes.</b> La période de soumission des résumés est terminée. Si votre résumé a été accepté, rendez-vous dans l'onglet « Déposer mon poster ».</div>`}
     <form id="submit-form" novalidate>
+      <fieldset class="${SUBMISSIONS_OPEN ? '' : 'closed'}" ${SUBMISSIONS_OPEN ? '' : 'disabled'}>
       <div class="field">
         <label for="titre">Titre du résumé</label>
         <input type="text" id="titre" name="titre">
@@ -144,6 +146,7 @@ function submitFormHTML(){
       <div class="submit-row">
         <button type="submit" class="primary" id="submit-btn">Envoyer mon résumé</button>
       </div>
+      </fieldset>
     </form>
   `;
 }
@@ -335,6 +338,7 @@ function bindSubmitForm(){
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if(!SUBMISSIONS_OPEN) return;
     formError.style.display = 'none';
 
     const titre = document.getElementById('titre').value.trim();
