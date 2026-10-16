@@ -1,7 +1,7 @@
 /* ============================================================
    CONFIGURATION — à renseigner avant la mise en ligne
    ============================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbyR1TIEwlk_XjRYlNnot3O6atLzGKwPY6C_HXH4fp8dnIawiazz9QTGmf5ak2346GwRwQ/exec"; ; // URL /exec du déploiement Google Apps Script (Code.gs)
+const API_URL = "https://script.google.com/macros/s/AKfycbyhZncFhFjwjMGQq95QnLXHeS_LaQeOpc63KOYdFuV-5-Wt7jNqmUA6hW9_kzdPoNNj/exec"; // URL /exec du déploiement Google Apps Script (Code.gs)
 const SUBMISSIONS_OPEN = false; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
 const THEMES = ["Psychiatrie", "Neurologie", "Cardiologie", "Pédiatrie", "Santé publique", "Autre"];
 
@@ -267,6 +267,10 @@ function adminPanelHTML(){
         </select>
       </td>
       <td>${r.decidePar ? escapeHtml(r.decidePar) : '—'}</td>
+      <td class="comment-cell">
+        <textarea class="comment-input" rows="2" data-comment-id="${escapeHtml(r.id)}" placeholder="Ajouter un commentaire…">${escapeHtml(r.commentaire || '')}</textarea>
+        <div class="comment-meta" data-comment-meta="${escapeHtml(r.id)}">${r.commentairePar ? 'par ' + escapeHtml(r.commentairePar) : ''}</div>
+      </td>
       <td>${r.posterLien ? `<a class="poster-link" href="${r.posterLien}" target="_blank" rel="noopener">${escapeHtml(r.posterNom||'Voir')}</a>` : '—'}</td>
       <td>${r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('fr-FR') : ''}</td>
     </tr>
@@ -292,7 +296,7 @@ function adminPanelHTML(){
         <table class="reg-table">
           <thead>
             <tr>
-              <th>ID</th><th>Titre</th><th>Auteur</th><th>Affiliations</th><th>Thème</th><th>Résumé</th><th>Statut</th><th>Décidé par</th><th>Poster</th><th>Date</th>
+              <th>ID</th><th>Titre</th><th>Auteur</th><th>Affiliations</th><th>Thème</th><th>Résumé</th><th>Statut</th><th>Décidé par</th><th>Commentaire</th><th>Poster</th><th>Date</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -610,6 +614,30 @@ function bindAdminPanel(){
       render();
     });
   });
+  document.querySelectorAll('[data-comment-id]').forEach(box => {
+    box.addEventListener('change', async () => {
+      const id = box.getAttribute('data-comment-id');
+      const meta = document.querySelector('[data-comment-meta="' + id + '"]');
+      const commentaire = box.value.trim();
+      if(meta) meta.textContent = 'Enregistrement…';
+      try{
+        const res = await fetch(API_URL, {
+          method:'POST',
+          body: JSON.stringify({ action:'updateComment', key: state.adminKey, id, commentaire, reviewer: state.reviewerName })
+        });
+        const data = await res.json();
+        if(data.ok){
+          const rec = state.registrations.find(r => r.id === id);
+          if(rec){ rec.commentaire = commentaire; rec.commentairePar = state.reviewerName; }
+          if(meta) meta.textContent = '✓ enregistré — par ' + state.reviewerName;
+        }else if(meta){
+          meta.textContent = '⚠ échec de l\'enregistrement';
+        }
+      }catch(e){
+        if(meta) meta.textContent = '⚠ échec de l\'enregistrement';
+      }
+    });
+  });
   document.querySelectorAll('[data-status-id]').forEach(sel => {
     sel.addEventListener('change', async () => {
       const id = sel.getAttribute('data-status-id');
@@ -634,12 +662,12 @@ function bindAdminPanel(){
 }
 
 function exportCSV(regs){
-  const headers = ['ID','Date','Titre','Auteur','Email','CoAuteurs','Affiliations','Theme','Statut','DecidePar','PosterNom','PosterLien'];
+  const headers = ['ID','Date','Titre','Auteur','Email','CoAuteurs','Affiliations','Theme','Statut','DecidePar','Commentaire','CommentairePar','PosterNom','PosterLien'];
   const lines = [headers.join(',')];
   regs.forEach(r => {
     const row = [
       r.id, r.submittedAt ? new Date(r.submittedAt).toLocaleString('fr-FR') : '',
-      r.titre, r.auteur, r.email, r.coauteurs, r.affiliations, r.theme, r.statut, r.decidePar, r.posterNom, r.posterLien
+      r.titre, r.auteur, r.email, r.coauteurs, r.affiliations, r.theme, r.statut, r.decidePar, r.commentaire, r.commentairePar, r.posterNom, r.posterLien
     ].map(v => '"' + String(v==null?'':v).replace(/"/g,'""') + '"');
     lines.push(row.join(','));
   });
