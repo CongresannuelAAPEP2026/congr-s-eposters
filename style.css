@@ -437,3 +437,7 @@ fieldset{border:none;padding:0;margin:0;min-width:0;}
 fieldset.closed{opacity:.45;filter:grayscale(1);pointer-events:none;user-select:none;}
 fieldset.closed input, fieldset.closed textarea{background:#EEEDE9;cursor:not-allowed;}
 fieldset.closed button.primary{background:#9AA6A1;cursor:not-allowed;}
+
+.comment-cell{min-width:200px;}
+.comment-input{width:100%;min-height:54px;padding:7px 9px;font-size:12.5px;border:1px solid var(--line);font-family:'IBM Plex Sans', sans-serif;resize:vertical;}
+.comment-meta{font-size:11px;color:var(--ink-soft);margin-top:3px;min-height:14px;}
