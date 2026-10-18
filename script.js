@@ -2,7 +2,7 @@
    CONFIGURATION — à renseigner avant la mise en ligne
    ============================================================ */
 const API_URL = "https://script.google.com/macros/s/AKfycbyhZncFhFjwjMGQq95QnLXHeS_LaQeOpc63KOYdFuV-5-Wt7jNqmUA6hW9_kzdPoNNj/exec"; // URL /exec du déploiement Google Apps Script (Code.gs)
-const SUBMISSIONS_OPEN = true; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
+const SUBMISSIONS_OPEN = false; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
 const THEMES = ["Psychiatrie", "Neurologie", "Cardiologie", "Pédiatrie", "Santé publique", "Autre"];
 
 let state = {
@@ -387,13 +387,16 @@ function bindSubmitForm(){
         body: JSON.stringify({ action:'submit', titre, auteur, email, coauteurs, affiliations, theme, texte })
       });
       const data = await res.json();
-      if(!data.ok) throw new Error(data.error || 'Échec de la soumission');
+      if(!data.ok){ const se = new Error(data.error || 'Échec de la soumission'); se.fromServer = true; throw se; }
       state.lastSubmission = { id: data.id, titre, auteur, email };
       state.view = 'submit-success';
       render();
     }catch(err){
+      console.error('Erreur de soumission :', err);
       formError.style.display = 'block';
-      formError.textContent = "Une erreur est survenue lors de l'envoi. Merci de réessayer.";
+      formError.textContent = err && err.fromServer
+        ? "Envoi refusé par le serveur : " + err.message
+        : "Une erreur est survenue lors de l'envoi (connexion au serveur impossible). Merci de réessayer.";
       submitBtn.disabled = false;
       submitBtn.textContent = "Envoyer mon résumé";
     }
