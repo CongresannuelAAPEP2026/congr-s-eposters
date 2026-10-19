@@ -2,7 +2,7 @@
    CONFIGURATION — à renseigner avant la mise en ligne
    ============================================================ */
 const API_URL = "https://script.google.com/macros/s/AKfycbyhZncFhFjwjMGQq95QnLXHeS_LaQeOpc63KOYdFuV-5-Wt7jNqmUA6hW9_kzdPoNNj/exec"; // URL /exec du déploiement Google Apps Script (Code.gs)
-const SUBMISSIONS_OPEN = true; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
+const SUBMISSIONS_OPEN = false; // false = formulaire fermé, seul le dépôt de poster (résumés acceptés) reste ouvert
 const THEMES = ["Psychiatrie", "Neurologie", "Cardiologie", "Pédiatrie", "Santé publique", "Autre"];
 
 let state = {
